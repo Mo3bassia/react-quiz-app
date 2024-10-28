@@ -1,7 +1,14 @@
+import Main from "./Main";
+import Header from "./Header";
+
 function App() {
   return (
-    <div>
-      <h2>Hello World!</h2>
+    <div className="app">
+      <Header />
+      <Main>
+        <p>1/15</p>
+        <p>Question?</p>
+      </Main>
     </div>
   );
 }
