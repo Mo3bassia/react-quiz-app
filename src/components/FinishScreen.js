@@ -17,7 +17,7 @@ function FinishScreen({ points, allPoints, dispatch, questions, highScore }) {
       <p className="highscore">(Highscore: {highScore} points)</p>
       <button
         className="btn btn-ui"
-        onClick={() => dispatch({ type: "dataRecieved", payload: questions })}
+        onClick={() => dispatch({ type: "restart" })}
       >
         Restart quiz
       </button>

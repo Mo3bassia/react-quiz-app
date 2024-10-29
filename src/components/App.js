@@ -8,6 +8,17 @@ import Question from "./Question";
 import NextButton from "./NextButton";
 import Progress from "./Progress";
 import FinishScreen from "./FinishScreen";
+import Footer from "./Footer.js";
+import Mo3bassia from "./Mo3bassia.js";
+
+function getTime(time) {
+  let minutes =
+    Math.floor(time / 60) < 10
+      ? `0${Math.floor(time / 60)}`
+      : Math.floor(time / 60);
+  let seconds = time % 60 < 10 ? `0${time % 60}` : time % 60;
+  return minutes + ":" + seconds;
+}
 
 function reducer(state, action) {
   switch (action.type) {
@@ -45,6 +56,16 @@ function reducer(state, action) {
     case "nextQuestion":
       return { ...state, index: state.index + 1, answer: null };
 
+    case "restart":
+      return {
+        ...initialState,
+        questions: state.questions,
+        status: "ready",
+        highScore: state.highScore,
+      };
+    case "decreaseTime":
+      return { ...state, allowedTime: state.allowedTime - 1 };
+
     default:
       throw new Error("Action Unkown");
   }
@@ -57,17 +78,28 @@ const initialState = {
   answer: null,
   points: 0,
   highScore: 0,
+  allowedTime: 450,
 };
 
 function App() {
-  const [{ answer, questions, status, index, points, highScore }, dispatch] =
-    useReducer(reducer, initialState);
+  const [
+    { answer, questions, status, index, points, highScore, allowedTime },
+    dispatch,
+  ] = useReducer(reducer, initialState);
 
   const allPoints = questions?.reduce((acc, curr) => {
     return acc + curr.points;
   }, 0);
 
   const numQuestions = questions.length;
+
+  useEffect(() => {
+    let inter = setInterval(function () {
+      dispatch({ type: "decreaseTime" });
+      if (allowedTime === 0) dispatch({ type: "finishQuiz" });
+    }, 1000);
+    return () => clearInterval(inter);
+  }, [allowedTime]);
 
   useEffect(() => {
     fetch("https://codingheroes.io/api-react-course-projects/questions.json")
@@ -106,16 +138,21 @@ function App() {
               dispatch={dispatch}
               answer={answer}
             />
-            {index !== questions.length - 1 ? (
-              <NextButton dispatch={dispatch} answer={answer} />
-            ) : (
-              <button
-                className="btn btn-ui"
-                onClick={() => dispatch({ type: "finishQuiz" })}
-              >
-                Finish
-              </button>
-            )}
+            <Footer>
+              {index !== questions.length - 1 ? (
+                <>
+                  <div className="timer">{getTime(allowedTime)}</div>
+                  <NextButton dispatch={dispatch} answer={answer} />
+                </>
+              ) : (
+                <button
+                  className="btn btn-ui"
+                  onClick={() => dispatch({ type: "finishQuiz" })}
+                >
+                  Finish
+                </button>
+              )}
+            </Footer>
           </>
         )}
         {status === "finished" && (
@@ -128,6 +165,7 @@ function App() {
           />
         )}
       </Main>
+      <Mo3bassia />
     </div>
   );
 }
