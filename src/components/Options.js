@@ -1,4 +1,15 @@
-function Options({ options, dispatch, answer, correctOption }) {
+function Options({
+  options,
+  dispatch,
+  answer,
+  correctOption,
+  questions,
+  index,
+}) {
+  // const handleClick = () => {
+  //   console.log(index !== questions.length - 1);
+  //   dispatch({ type: "newAnswer", payload: index });
+  // };
   return (
     <div className="options">
       {options.map((option, index) => (

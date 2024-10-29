@@ -7,16 +7,31 @@ import { useEffect, useReducer } from "react";
 import Question from "./Question";
 import NextButton from "./NextButton";
 import Progress from "./Progress";
+import FinishScreen from "./FinishScreen";
 
 function reducer(state, action) {
   switch (action.type) {
     case "dataRecieved":
-      return { ...state, questions: action.payload, status: "ready" };
+      return {
+        ...state,
+        questions: action.payload,
+        status: "ready",
+        points: 0,
+        index: 0,
+        answer: null,
+      };
 
     case "dataFailed":
       return { ...state, status: "error" };
     case "start":
       return { ...state, status: "active" };
+    case "finishQuiz":
+      return {
+        ...state,
+        status: "finished",
+        highScore:
+          state.points > state.highScore ? state.points : state.highScore,
+      };
     case "newAnswer":
       const question = state.questions[state.index];
       return {
@@ -41,13 +56,12 @@ const initialState = {
   index: 0,
   answer: null,
   points: 0,
+  highScore: 0,
 };
 
 function App() {
-  const [{ answer, questions, status, index, points }, dispatch] = useReducer(
-    reducer,
-    initialState
-  );
+  const [{ answer, questions, status, index, points, highScore }, dispatch] =
+    useReducer(reducer, initialState);
 
   const allPoints = questions?.reduce((acc, curr) => {
     return acc + curr.points;
@@ -86,12 +100,32 @@ function App() {
               answer={answer}
             />
             <Question
+              index={index}
+              questions={questions}
               question={questions[index]}
               dispatch={dispatch}
               answer={answer}
             />
-            <NextButton dispatch={dispatch} answer={answer} />
+            {index !== questions.length - 1 ? (
+              <NextButton dispatch={dispatch} answer={answer} />
+            ) : (
+              <button
+                className="btn btn-ui"
+                onClick={() => dispatch({ type: "finishQuiz" })}
+              >
+                Finish
+              </button>
+            )}
           </>
+        )}
+        {status === "finished" && (
+          <FinishScreen
+            dispatch={dispatch}
+            points={points}
+            questions={questions}
+            allPoints={allPoints}
+            highScore={highScore}
+          />
         )}
       </Main>
     </div>
