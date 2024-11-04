@@ -382,3 +382,34 @@ progress {
     padding: 5px 10px;
   }
 }
+
+.filter-questions {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  margin-block: 20px;
+}
+
+.filter-questions label > h4 {
+  margin-bottom: 0;
+}
+
+.filter-questions select {
+  padding: 0.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  background-color: #f0f0f0;
+  font-size: 1.4rem;
+
+  color: var(--color-dark);
+
+  cursor: pointer;
+
+  transition: background-color 0.3s;
+
+  outline: none;
+
+  &:hover {
+    background-color: #e0e0e0;
+  }
+}
