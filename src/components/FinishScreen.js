@@ -15,12 +15,20 @@ function FinishScreen({ points, allPoints, dispatch, questions, highScore }) {
         {percentage}%)
       </p>
       <p className="highscore">(Highscore: {highScore} points)</p>
-      <button
-        className="btn btn-ui"
-        onClick={() => dispatch({ type: "restart" })}
-      >
-        Restart quiz
-      </button>
+      <div className="btns-cont">
+        <button
+          className="btn btn-ui"
+          onClick={() => dispatch({ type: "seeResults" })}
+        >
+          See Results
+        </button>
+        <button
+          className="btn btn-ui"
+          onClick={() => dispatch({ type: "restart" })}
+        >
+          Restart quiz
+        </button>
+      </div>
     </>
   );
 }

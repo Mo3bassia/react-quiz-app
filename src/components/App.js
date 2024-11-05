@@ -55,14 +55,16 @@ function reducer(state, action) {
     case "finishQuiz":
       return {
         ...state,
+        allAnswers:
+          state.allAnswers.length === state.filteredQuestions.length
+            ? [...state.allAnswers]
+            : [...state.allAnswers, state.answer],
         status: "finished",
         highScore:
           state.points > state.highScore ? state.points : state.highScore,
       };
     case "newAnswer":
       let question = state.questions[state.index];
-      console.log(state.filteredQuestions);
-      console.log(action.payload);
       if (state.filteredQuestions.length !== 0)
         question = state.filteredQuestions[state.index];
       return {
@@ -74,11 +76,31 @@ function reducer(state, action) {
             : state.points,
       };
     case "nextQuestion":
-      return { ...state, index: state.index + 1, answer: null };
+      return {
+        ...state,
+        index: state.index + 1,
+        answer:
+          state.allAnswers.length === state.filteredQuestions.length
+            ? state.allAnswers[state.index + 1]
+            : null,
+        allAnswers:
+          state.allAnswers.length === state.filteredQuestions.length
+            ? [...state.allAnswers]
+            : [...state.allAnswers, state.answer],
+      };
+    case "seeResults":
+      return {
+        ...state,
+        status: "replay",
+        index: 0,
+        answer: state.allAnswers[0],
+        timer: false,
+      };
 
     case "restart":
       return {
         ...initialState,
+        allAnswers: [],
         questions: state.questions,
         filteredQuestions: state.questions,
         status: "ready",
@@ -98,10 +120,12 @@ const initialState = {
   status: "loading",
   index: 0,
   answer: null,
+  allAnswers: [],
   points: 0,
   highScore: 0,
   allowedTime: 450,
   difficulty: "All",
+  timer: true,
 };
 
 function App() {
@@ -116,6 +140,7 @@ function App() {
       allowedTime,
       difficulty,
       filteredQuestions,
+      timer,
     },
     dispatch,
   ] = useReducer(reducer, initialState);
@@ -152,7 +177,7 @@ function App() {
             onStart={() => dispatch({ type: "start" })}
           />
         )}
-        {status === "active" && (
+        {(status === "active" || status === "replay") && (
           <>
             <Progress
               numQuestions={numQuestions}
@@ -171,7 +196,9 @@ function App() {
             <Footer>
               {index !== questions.length - 1 ? (
                 <>
-                  <Timer allowedTime={allowedTime} dispatch={dispatch} />
+                  {timer && (
+                    <Timer allowedTime={allowedTime} dispatch={dispatch} />
+                  )}
                   <NextButton dispatch={dispatch} answer={answer} />
                 </>
               ) : (

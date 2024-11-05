@@ -416,3 +416,9 @@ progress {
 .filter-questions select option {
   color: #000;
 }
+
+.btns-cont {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
