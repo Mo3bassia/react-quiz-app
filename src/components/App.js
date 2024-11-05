@@ -10,8 +10,9 @@ import Progress from "./Progress";
 import FinishScreen from "./FinishScreen";
 import Footer from "./Footer.js";
 import Mo3bassia from "./Mo3bassia.js";
+import Timer from "./Timer.js";
 
-function getTime(time) {
+export function getTime(time) {
   let minutes =
     Math.floor(time / 60) < 10
       ? `0${Math.floor(time / 60)}`
@@ -26,16 +27,31 @@ function reducer(state, action) {
       return {
         ...state,
         questions: action.payload,
+        filteredQuestions: action.payload,
         status: "ready",
         points: 0,
         index: 0,
         answer: null,
       };
+    case "setDifficulty":
+      return {
+        ...state,
+        difficulty: action.payload,
+        filteredQuestions: state.questions.filter((q) =>
+          action.payload.toLowerCase() === "all"
+            ? true
+            : q.difficulty === action.payload.toLowerCase()
+        ),
+      };
 
     case "dataFailed":
       return { ...state, status: "error" };
     case "start":
-      return { ...state, status: "active" };
+      return {
+        ...state,
+        status: "active",
+        allowedTime: state.filteredQuestions.length * 30,
+      };
     case "finishQuiz":
       return {
         ...state,
@@ -44,7 +60,11 @@ function reducer(state, action) {
           state.points > state.highScore ? state.points : state.highScore,
       };
     case "newAnswer":
-      const question = state.questions[state.index];
+      let question = state.questions[state.index];
+      console.log(state.filteredQuestions);
+      console.log(action.payload);
+      if (state.filteredQuestions.length !== 0)
+        question = state.filteredQuestions[state.index];
       return {
         ...state,
         answer: action.payload,
@@ -60,6 +80,7 @@ function reducer(state, action) {
       return {
         ...initialState,
         questions: state.questions,
+        filteredQuestions: state.questions,
         status: "ready",
         highScore: state.highScore,
       };
@@ -73,19 +94,33 @@ function reducer(state, action) {
 
 const initialState = {
   questions: [],
+  filteredQuestions: [],
   status: "loading",
   index: 0,
   answer: null,
   points: 0,
   highScore: 0,
   allowedTime: 450,
+  difficulty: "All",
 };
 
 function App() {
-  const [
-    { answer, questions, status, index, points, highScore, allowedTime },
+  let [
+    {
+      answer,
+      questions,
+      status,
+      index,
+      points,
+      highScore,
+      allowedTime,
+      difficulty,
+      filteredQuestions,
+    },
     dispatch,
   ] = useReducer(reducer, initialState);
+
+  [filteredQuestions, questions] = [questions, filteredQuestions];
 
   const allPoints = questions?.reduce((acc, curr) => {
     return acc + curr.points;
@@ -94,15 +129,9 @@ function App() {
   const numQuestions = questions.length;
 
   useEffect(() => {
-    let inter = setInterval(function () {
-      dispatch({ type: "decreaseTime" });
-      if (allowedTime === 0) dispatch({ type: "finishQuiz" });
-    }, 1000);
-    return () => clearInterval(inter);
-  }, [allowedTime]);
-
-  useEffect(() => {
-    fetch("https://codingheroes.io/api-react-course-projects/questions.json")
+    fetch(
+      "https://my-json-server.typicode.com/Mo3bassia/react-quiz-app/questions"
+    )
       .then((result) => result.json())
       .then((data) => {
         dispatch({ type: "dataRecieved", payload: data });
@@ -118,6 +147,7 @@ function App() {
         {status === "error" && <Error />}
         {status === "ready" && (
           <StartScreen
+            dispatch={dispatch}
             numQuestions={numQuestions}
             onStart={() => dispatch({ type: "start" })}
           />
@@ -141,7 +171,7 @@ function App() {
             <Footer>
               {index !== questions.length - 1 ? (
                 <>
-                  <div className="timer">{getTime(allowedTime)}</div>
+                  <Timer allowedTime={allowedTime} dispatch={dispatch} />
                   <NextButton dispatch={dispatch} answer={answer} />
                 </>
               ) : (

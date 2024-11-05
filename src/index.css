@@ -387,7 +387,11 @@ progress {
   display: flex;
   gap: 20px;
   align-items: center;
-  margin-block: 20px;
+  margin-bottom: 20px;
+}
+
+.filter-questions label {
+  color: #1098ad;
 }
 
 .filter-questions label > h4 {
