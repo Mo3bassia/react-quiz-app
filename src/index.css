@@ -208,6 +208,7 @@ progress {
   float: left;
   font-size: 1.8rem;
   color: var(--color-medium);
+  background-color: var(--color-dark);
   border: 2px solid var(--color-dark);
   padding: 1.35rem 2.8rem;
   border-radius: 100px;
@@ -259,34 +260,35 @@ progress {
 }
 
 .footer {
+  position: fixed;
   width: fit-content;
   margin: 20px auto;
   font-size: 1.3rem;
-  color: #6c757d;
-  background-color: #ffffff;
+  color: #ffffffab;
+  background-color: #6c757d;
   padding: 10px 15px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   z-index: 1000;
   text-align: center;
   transition: background-color 0.3s, box-shadow 0.3s;
-  position: absolute;
   bottom: 0;
+  z-index: 0;
+}
+
+*:not(.footer) {
+  position: relative;
+  z-index: 1;
 }
 
 .footer a {
-  color: var(--color-dark);
+  color: #fff;
   text-decoration: none;
   font-weight: bold;
 }
 
 .footer a:hover {
   text-decoration: underline;
-}
-
-.footer:hover {
-  background-color: #f1f1f1;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
 /* Responsive adjustments */
