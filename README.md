@@ -10,6 +10,11 @@ Check out the live demo: [https://react-quiz-mo3bassias-projects.vercel.app](htt
 
 The React Quiz App is a comprehensive quiz application that fetches questions from an external API and allows users to test their knowledge. This project demonstrates advanced state management using `useReducer` and other React hooks.
 
+**New Features Added**:
+
+- Ability to choose the difficulty level (Easy, Medium, Hard, or All).
+- Option to review answers and compare your responses with the correct ones.
+
 ## Features ✨
 
 - **Dynamic Questions**: Fetch questions from an API.
@@ -18,6 +23,8 @@ The React Quiz App is a comprehensive quiz application that fetches questions fr
 - **Interactive UI**: Provides an interactive user interface with immediate feedback.
 - **Progress Tracking**: Tracks the user's progress throughout the quiz.
 - **High Score Tracking**: Keeps track of the highest score achieved.
+- **Level Selection**: Choose the difficulty level of the quiz (Easy, Medium, Hard, or All).
+- **Review Answers**: Ability to review questions, see correct answers, and compare them with your own responses.
 
 ## Technologies and Libraries Used 🛠️
 
