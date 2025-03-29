@@ -1,15 +1,14 @@
+import { useQuiz } from "../contexts/QuizContext";
+
 function Options({
-  options,
-  dispatch,
-  answer,
   correctOption,
-  questions,
-  index,
+  options
 }) {
   // const handleClick = () => {
   //   console.log(index !== questions.length - 1);
   //   dispatch({ type: "newAnswer", payload: index });
   // };
+  const { questions,index,answer,dispatch } = useQuiz()
   return (
     <div className="options">
       {options.map((option, index) => (
