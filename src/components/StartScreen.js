@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { useQuiz } from "../contexts/QuizContext";
 
-function StartScreen({ numQuestions, onStart, dispatch }) {
+function StartScreen({ onStart }) {
+  const {numQuestions ,dispatch} = useQuiz()
   const [difficultyValue, setDifficultyValue] = useState("All");
 
   function handleChange(e) {
